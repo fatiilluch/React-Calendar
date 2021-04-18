@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Modal from 'react-modal';
 import Calendar from "./components/Calendar";
 
+
 Modal.setAppElement('#root')
 
 function App() {
@@ -24,12 +25,13 @@ function App() {
             isOpen={modalIsOpen}
             onRequestClose={() => setModalIsOpen(false)}
             >
-            <Calendar />
+            <h2> CALENDAR </h2>
             <div>
                 <button onClick={() => setModalIsOpen(false)}> Close </button>
             </div>
 
         </Modal>
+        <Calendar />
     </div>
   );
 }

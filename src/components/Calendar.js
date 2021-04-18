@@ -2,26 +2,31 @@ import React from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction";
-import timegridplugin from "@fullcalendar/timegrid";
-import $ from 'jquery';
-// import 'moment/min/moment.min.js';
+import timegridplugin from "@fullcalendar/timegrid"
+
+import "@fullcalendar/common/main.css";
 
 export default class Calendar extends React.Component {
 
     calendarComponentRef = React.createRef();
 
     state={
-        calendarWeejends: true,
+        calendarWeekends: true,
         calendarEvents: [
             {
                 title: 'Event Now',
                 start: new Date()
+            },
+            {
+                title: 'Hola Mundo',
+                start: '2021-04-20',
+                end: '2021-04-22'
             }
         ]
     };
 
     handleDateClick = (click) => {
-        alert(click.dateStr)
+        //alert(click.dateStr)
     }
 
     renderEventContent = (eventInfo) => {
@@ -35,44 +40,69 @@ export default class Calendar extends React.Component {
 
     agregarEvento = () => {
         let calendarApi = this.calendarComponentRef.current.getApi();
-        //calendarApi.gotoDate("2000-01-01"); // call a method on the Calendar object
         console.log("CalendarApi");
         console.log(calendarApi);
-        let fecha_S = prompt("fecha de inicio En formato YYYY-MM-DD");
-        let fecha_E = prompt("fecha de fin En formato YYYY-MM-DD");
+        let fecha_S = prompt("fecha de inicio");
+        let fecha_E = prompt("fecha de fin");
         let title = prompt("Titulo:");
         let color = prompt("Color");
-        if (window.confirm("Queres agregar un evento?")) {
-            this.setState({
-                calendarEvents: this.state.calendarEvents.concat({
-                    title: title,
-                    start: fecha_S,
-                    end: fecha_E,
-                    color: color
+        if (fecha_S < new Date()) {     //ver como comparar fechas
+            alert("No se pueden crear eventos en el pasado");
+        }
+        else {
+            if (window.confirm("Queres agregar un evento?")) {
+                this.setState({
+                    calendarEvents: this.state.calendarEvents.concat({
+                        title: title,
+                        start: fecha_S,
+                        end: fecha_E,
+                        backgroundColor :color,
+                    })
                 })
-            })
+            }
         }
     };
 
     gotoADate = () => {
         let calendarApi = this.calendarComponentRef.current.getApi();
-        calendarApi.gotoDate(prompt("A que fecha quieres ir? Formato: YYYY-MM-DD"));
+        if(window.confirm("Queres ir una fecha en especifico?")) {
+            //calendarApi.gotoDate();
+            let date = prompt("A que fecha quieres ir? Formato: YYYY-MM-DD");
+            calendarApi.gotoDate(date);
+            calendarApi.select(date);
+        }
+        else{
+            alert("Bye!")
+        }
     };
 
     render() {
         return (
             <div>
                 <FullCalendar
-                    plugins={[ dayGridPlugin, interactionPlugin, timegridplugin ]}
+                    plugins={[ dayGridPlugin, interactionPlugin, timegridplugin]}
                     initialView="dayGridMonth"
                     dateClick={this.handleDateClick}
                     eventContent={this.renderEventContent}
                     //eventRender={this.handleEventRender}
                     editable={true}
+                    droppable={true}
+                    selectable={true}
+                    selectHelper={true}
+                    weekends={this.state.calendarWeekends}
                     events={this.state.calendarEvents}
-                    eventClick={this.toggle}
                     ref={this.calendarComponentRef}
-                    themeSystem="bootstrap"
+                    businessHours={
+                        [
+                            {
+                                daysOfWeek: [1, 2, 3, 4, 5],
+                                startTime: '09:00',
+                                endTime: '22:00',
+                                display: 'inverse-background',
+                            }
+                        ]
+                    }
+                    //themeSystem='bootstrap'
                     customButtons={{
                         agregar : {
                             text: 'Agrega evento',
