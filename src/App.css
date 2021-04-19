@@ -1,5 +1,16 @@
 .App {
-  margin-top: 5px;
-  text-align: center;
+  margin: auto;
+  width: 100%;
 }
 
+.calendar {
+  width: 100%;
+}
+
+.boton-agregar {
+  margin-top: 0.25rem !important;
+  margin-bottom: 0.25rem;
+  margin-left: 0.25rem;
+  display: flex;
+  align-items: center;
+}
