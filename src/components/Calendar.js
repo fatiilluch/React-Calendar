@@ -22,6 +22,7 @@ export default class Calendar extends React.Component {
         calendarWeekends: true,
         form: {
             title: '',
+            owner: '',
             start: '',
             end: '',
             backgroundColor: ''
@@ -30,10 +31,12 @@ export default class Calendar extends React.Component {
             {
                 title: 'Event Now',
                 start: new Date(),
-                backgroundColor: 'brown'
+                owner: 'Fátima',
+                backgroundColor: 'pink'
             },
             {
                 title: 'Hola Mundo',
+                owner: 'Fátima',
                 start: '2021-04-20',
                 end: '2021-04-22',
                 backgroundColor: 'lightblue'
@@ -95,6 +98,20 @@ export default class Calendar extends React.Component {
 
     handleEventContent = (eventInfo) => {
         console.log(eventInfo);
+        let datos = {
+            title: eventInfo.event._def.title,
+            owner: eventInfo.event._def.extendedProps.owner,
+            start: eventInfo.event._instance.range.start,
+            end: eventInfo.event._instance.range.end,
+            backgroundColor: eventInfo.event._def.ui.backgroundColor
+        };
+        console.log(eventInfo.event._def.title);
+        console.log(eventInfo.event._instance.range.start);
+        console.log(eventInfo.event._instance.range.end);
+        console.log(eventInfo.event._def.extendedProps.owner);
+        console.log(eventInfo.event._def.ui.backgroundColor);
+        this.setState({form: datos})
+        console.log(this.state.form);
         this.openModalOptions();
     };
 
@@ -106,7 +123,7 @@ export default class Calendar extends React.Component {
     handleDeleteEvent = () => {
         this.closeModalOptions();
         this.openModalDelete();
-    }
+    };
 
     // Open y Close de los Modals
 
@@ -190,19 +207,19 @@ export default class Calendar extends React.Component {
                     </ModalHeader>
                     <ModalBody>
                         <FormGroup>
-                            <Label> Title: </Label> <Input className="form-control" name='title' type='text' readOnly value="Titulo"/>
+                            <Label> Title: </Label> <Input className="form-control" name='title' type='text' readOnly value={this.state.form.title}/>
                         </FormGroup>
                         <FormGroup>
-                            <Label> Owner: </Label> <Input className="form-control" name="owner" readOnly value="owner"/>
+                            <Label> Owner: </Label> <Input className="form-control" name="owner" readOnly value={this.state.form.owner}/>
                         </FormGroup>
                         <FormGroup>
-                            <Label> Start Date: </Label> <Input className="form-control" name='start' type='date' readOnly value="Start"/>
+                            <Label> Start Date: </Label> <Input className="form-control" name='start' type='text' readOnly value={this.state.form.start}/>
                         </FormGroup>
                         <FormGroup>
-                            <Label> End Date: </Label> <Input className='form-control' name="end" type='date' readOnly value="End"/>
+                            <Label> End Date: </Label> <Input className='form-control' name="end" type='text' readOnly value={this.state.form.end}/>
                         </FormGroup>
                         <FormGroup>
-                            <Label> Colour: </Label> <Input className="form-control"  name="backgroundColor" type='color' readOnly value="color"/>
+                            <Label> Colour: </Label> <Input className="form-control"  name="backgroundColor" type='text' readOnly value={this.state.form.backgroundColor}/>
                         </FormGroup>
                     </ModalBody>
                     <ModalFooter>
@@ -215,6 +232,23 @@ export default class Calendar extends React.Component {
                         </ButtonGroup>
                     </ModalFooter>
 
+                </Modal>
+
+                <Modal isOpen={this.state.modalDelete}>
+                    <ModalHeader>
+                        Delete Panel:
+                    </ModalHeader>
+                    <ModalBody>
+                        Do you want to delete this event?
+                    </ModalBody>
+                    <ModalFooter>
+                        <ButtonGroup>
+                            <Button color='success' onClick={this.handleDeleteEvent}> Yes </Button>
+                        </ButtonGroup>
+                        <ButtonGroup>
+                            <Button color='danger' onClick={this.closeModalDelete}> No </Button>
+                        </ButtonGroup>
+                    </ModalFooter>
                 </Modal>
 
                 <div className='calendar'>
