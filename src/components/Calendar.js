@@ -69,6 +69,17 @@ export default class Calendar extends React.Component {
             modalInsert: false})
         };
 
+    deleteEvent = () => {
+        this.closeModalDelete();
+        console.log("Deleting...");
+    };
+
+    editEvent = () => {
+        console.log("Editing...");
+        this.closeModalEdit();
+
+    };
+
     gotoADate = () => {
         let calendarApi = this.calendarComponentRef.current.getApi();
         if(window.confirm("Queres ir una fecha en especifico?")) {
@@ -223,15 +234,10 @@ export default class Calendar extends React.Component {
                         </FormGroup>
                     </ModalBody>
                     <ModalFooter>
-                        <ButtonGroup>
-                            <Button color='danger' onClick={this.closeModalOptions}> Cancel </Button>
-                        </ButtonGroup>
-                        <ButtonGroup>
-                            <Button color='success' onClick={this.handleEditEvent}> Edit Event </Button> {'  '}
-                            <Button color='danger' onClick={this.handleDeleteEvent}> Delete </Button> {'   '}
-                        </ButtonGroup>
+                        <Button className="flex-box" color='danger' onClick={this.closeModalOptions}> Cancel </Button>
+                        <Button className="flex-box" color='success' onClick={this.handleEditEvent}> Edit Event </Button> {'  '}
+                        <Button className="flex-box" color='danger' onClick={this.handleDeleteEvent}> Delete </Button> {'   '}
                     </ModalFooter>
-
                 </Modal>
 
                 <Modal isOpen={this.state.modalDelete}>
@@ -243,10 +249,27 @@ export default class Calendar extends React.Component {
                     </ModalBody>
                     <ModalFooter>
                         <ButtonGroup>
-                            <Button color='success' onClick={this.handleDeleteEvent}> Yes </Button>
+                            <Button color='success' onClick={this.deleteEvent}> Yes </Button>
                         </ButtonGroup>
                         <ButtonGroup>
                             <Button color='danger' onClick={this.closeModalDelete}> No </Button>
+                        </ButtonGroup>
+                    </ModalFooter>
+                </Modal>
+
+                <Modal isOpen={this.state.modalEdit}>
+                    <ModalHeader>
+                        Edit Panel:
+                    </ModalHeader>
+                    <ModalBody>
+                        MODAL UNDER CONSTRUCTION
+                    </ModalBody>
+                    <ModalFooter>
+                        <ButtonGroup>
+                            <Button color='success' onClick={this.editEvent}> Edit </Button>
+                        </ButtonGroup>
+                        <ButtonGroup>
+                            <Button color='danger' onClick={this.closeModalEdit}> Exit </Button>
                         </ButtonGroup>
                     </ModalFooter>
                 </Modal>
