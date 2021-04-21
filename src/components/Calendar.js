@@ -14,6 +14,12 @@ export default class Calendar extends React.Component {
 
     calendarComponentRef = React.createRef();
 
+    calendarEvents = [
+        { id: 1, title: 'Event Now', start: '2021-04-05', end: '2021-04-10', owner: 'Fátima', backgroundColor: 'pink' },
+        { id: 2, title: 'Hola Mundo', start: '2021-04-20', end: '2021-04-22', owner: 'Fátima', backgroundColor: 'lightblue' },
+        { id: 3, title: 'Vaciones', start: '2021-04-21', end: '2021-04-27', owner: 'Fátima', backgroundColor: 'green' }
+    ]
+
     state={
         modalInsert: false,
         modalOptions: false,
@@ -21,27 +27,14 @@ export default class Calendar extends React.Component {
         modalDelete: false,
         calendarWeekends: true,
         form: {
+            id: '',
             title: '',
             owner: '',
             start: '',
             end: '',
             backgroundColor: ''
         },
-        calendarEvents: [
-            {
-                title: 'Event Now',
-                start: new Date(),
-                owner: 'Fátima',
-                backgroundColor: 'pink'
-            },
-            {
-                title: 'Hola Mundo',
-                owner: 'Fátima',
-                start: '2021-04-20',
-                end: '2021-04-22',
-                backgroundColor: 'lightblue'
-            }
-        ],
+        calendarEvents: this.calendarEvents
     };
 
     // Funciones especificas
@@ -56,11 +49,14 @@ export default class Calendar extends React.Component {
     }
 
     agregarEvento = () => {
+        this.setState({form: {}})
         let valorNuevo = {...this.state.form};
+        valorNuevo.id = this.state.calendarEvents.length+1;
         let lista = this.state.calendarEvents;
         lista.push(valorNuevo);
         this.setState({
             calendarEvents: lista.concat({
+                id: "",
                 title: "",
                 start: '',
                 end: '',
@@ -69,15 +65,29 @@ export default class Calendar extends React.Component {
             modalInsert: false})
         };
 
-    deleteEvent = () => {
+    deleteEvent = (dato) => {
         this.closeModalDelete();
+        let lista = this.state.calendarEvents;
+        console.log("lista", lista);
+        let form = this.state.form;
+        let contador = 0;
+        console.log("form", form);
+        lista.forEach((e) => {
+            if (e.id.toString() === form.id){
+                lista.splice(contador, 1);
+                console.log("Aca llegue");
+            }
+            contador ++;
+        });
+        this.setState({calendarEvents: lista});
+        //this.setState({form: { id: '', title: '', start: '', end: '', backgroundColor: ''}})
         console.log("Deleting...");
+        console.log(lista);
     };
 
     editEvent = () => {
         console.log("Editing...");
         this.closeModalEdit();
-
     };
 
     gotoADate = () => {
@@ -110,17 +120,18 @@ export default class Calendar extends React.Component {
     handleEventContent = (eventInfo) => {
         console.log(eventInfo);
         let datos = {
+            id: eventInfo.event._def.publicId,
             title: eventInfo.event._def.title,
             owner: eventInfo.event._def.extendedProps.owner,
-            start: eventInfo.event._instance.range.start,
-            end: eventInfo.event._instance.range.end,
+            start: eventInfo.event._instance.range.start.toJSON().slice("T",10),
+            end: eventInfo.event._instance.range.end.toJSON().slice("T",10),
             backgroundColor: eventInfo.event._def.ui.backgroundColor
         };
-        console.log(eventInfo.event._def.title);
-        console.log(eventInfo.event._instance.range.start);
-        console.log(eventInfo.event._instance.range.end);
-        console.log(eventInfo.event._def.extendedProps.owner);
-        console.log(eventInfo.event._def.ui.backgroundColor);
+        //console.log(eventInfo.event._def.title);
+        //console.log(eventInfo.event._instance.range.start);
+        //console.log(eventInfo.event._instance.range.end);
+        //console.log(eventInfo.event._def.extendedProps.owner);
+        //console.log(eventInfo.event._def.ui.backgroundColor);
         this.setState({form: datos})
         console.log(this.state.form);
         this.openModalOptions();
@@ -183,6 +194,9 @@ export default class Calendar extends React.Component {
                     </ModalHeader>
                     <ModalBody>
                         <FormGroup>
+                            <Label> Id: </Label> <Input className="form-control" readOnly name='id' type='text' value={this.state.calendarEvents.length+1}/>
+                        </FormGroup>
+                        <FormGroup>
                             <Label> Title: </Label> <Input className="form-control" name='title' type='text' required="true" onChange={this.handleChange} placeholder="Enter title here"/>
                         </FormGroup>
                         <FormGroup>
@@ -218,6 +232,9 @@ export default class Calendar extends React.Component {
                     </ModalHeader>
                     <ModalBody>
                         <FormGroup>
+                            <Label> Id: </Label> <Input className="form-control" readOnly name='id' type='text' value={this.state.form.id}/>
+                        </FormGroup>
+                        <FormGroup>
                             <Label> Title: </Label> <Input className="form-control" name='title' type='text' readOnly value={this.state.form.title}/>
                         </FormGroup>
                         <FormGroup>
@@ -228,9 +245,6 @@ export default class Calendar extends React.Component {
                         </FormGroup>
                         <FormGroup>
                             <Label> End Date: </Label> <Input className='form-control' name="end" type='text' readOnly value={this.state.form.end}/>
-                        </FormGroup>
-                        <FormGroup>
-                            <Label> Colour: </Label> <Input className="form-control"  name="backgroundColor" type='text' readOnly value={this.state.form.backgroundColor}/>
                         </FormGroup>
                     </ModalBody>
                     <ModalFooter>
