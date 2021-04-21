@@ -25,6 +25,7 @@ export default class Calendar extends React.Component {
         modalOptions: false,
         modalEdit: false,
         modalDelete: false,
+        modalGoToDate: false,
         calendarWeekends: true,
         form: {
             id: '',
@@ -33,6 +34,9 @@ export default class Calendar extends React.Component {
             start: '',
             end: '',
             backgroundColor: ''
+        },
+        date: {
+            dateToGo: "",
         },
         calendarEvents: this.calendarEvents
     };
@@ -49,7 +53,6 @@ export default class Calendar extends React.Component {
     }
 
     agregarEvento = () => {
-        this.setState({form: {}})
         let valorNuevo = {...this.state.form};
         valorNuevo.id = this.state.calendarEvents.length+1;
         let lista = this.state.calendarEvents;
@@ -92,14 +95,11 @@ export default class Calendar extends React.Component {
 
     gotoADate = () => {
         let calendarApi = this.calendarComponentRef.current.getApi();
-        if(window.confirm("Queres ir una fecha en especifico?")) {
-            let date = prompt("A que fecha quieres ir? Formato: YYYY-MM-DD");
-            calendarApi.gotoDate(date);
-            calendarApi.select(date);
-        }
-        else{
-            alert("Bye!")
-        }
+        let date = {...this.state.date};
+        let dateToGO = date.dateToGo;
+        calendarApi.gotoDate(dateToGO);
+        calendarApi.select(dateToGO);
+        this.closeModalGoToDate();
     };
 
     // Handlers de las secciones
@@ -116,6 +116,19 @@ export default class Calendar extends React.Component {
             }
         });
     };
+
+    handleChangeDate = (event) => {
+        this.setState({
+            date :{
+                ...this.state.date,
+                [event.target.name]: event.target.value,
+            }
+        });
+    };
+
+    handleDate = () => {
+        this.openModalGoToDate();
+    }
 
     handleEventContent = (eventInfo) => {
         console.log(eventInfo);
@@ -181,12 +194,39 @@ export default class Calendar extends React.Component {
         this.setState({modalDelete: false})
     };
 
+    openModalGoToDate = () => {
+      this.setState({modalDoToDate: true})
+    };
+
+    closeModalGoToDate = () => {
+      this.setState({modalDoToDate: false})
+    };
+
     render() {
         return (
             <div>
                 <div>
                     <Button color="success" size="lg" className='boton-agregar' onClick={this.showModalInsert}> Agregar Evento </Button>
                 </div>
+
+                <Modal isOpen={this.state.modalDoToDate}>
+                    <ModalHeader>
+                        Chose a date to go:
+                    </ModalHeader>
+                    <ModalBody>
+                        <FormGroup>
+                            <Label> Choose Date: </Label> <Input className="form-control" name='dateToGo' type='date' required="true" onChange={this.handleChangeDate}/>
+                        </FormGroup>
+                    </ModalBody>
+                    <ModalFooter>
+                        <ButtonGroup>
+                            <Button color='success' onClick={this.gotoADate}> Go! </Button>
+                        </ButtonGroup>
+                        <ButtonGroup>
+                            <Button color='danger' onClick={this.closeModalGoToDate}> Exit </Button>
+                        </ButtonGroup>
+                    </ModalFooter>
+                </Modal>
 
                 <Modal isOpen={this.state.modalInsert}>
                     <ModalHeader>
@@ -232,7 +272,7 @@ export default class Calendar extends React.Component {
                     </ModalHeader>
                     <ModalBody>
                         <FormGroup>
-                            <Label> Id: </Label> <Input className="form-control" readOnly name='id' type='text' value={this.state.form.id}/>
+                            <Label> ID: </Label><Input className="form-control" name='id' type='text' readOnly value={this.state.form.id}/>
                         </FormGroup>
                         <FormGroup>
                             <Label> Title: </Label> <Input className="form-control" name='title' type='text' readOnly value={this.state.form.title}/>
@@ -314,7 +354,7 @@ export default class Calendar extends React.Component {
                         customButtons={{
                             goToADate: {
                                 text: 'Go to a Date',
-                                click: this.gotoADate
+                                click: this.handleDate
                             }
                         }}
                         headerToolbar={{
