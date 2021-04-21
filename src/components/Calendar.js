@@ -65,24 +65,24 @@ export default class Calendar extends React.Component {
             modalInsert: false})
         };
 
-    deleteEvent = (dato) => {
+    deleteEvent = () => {
         this.closeModalDelete();
         let lista = this.state.calendarEvents;
-        console.log("lista", lista);
         let form = this.state.form;
         let contador = 0;
-        console.log("form", form);
+        let calendarApi = this.calendarComponentRef.current.getApi();
         lista.forEach((e) => {
             if (e.id.toString() === form.id){
                 lista.splice(contador, 1);
+                calendarApi.getEventById(e.id.toString()).remove();
                 console.log("Aca llegue");
             }
             contador ++;
         });
         this.setState({calendarEvents: lista});
-        //this.setState({form: { id: '', title: '', start: '', end: '', backgroundColor: ''}})
-        console.log("Deleting...");
         console.log(lista);
+        this.setState({form: { id: '', title: '', start: '', end: '', backgroundColor: ''}})
+        console.log("Deleting...");
     };
 
     editEvent = () => {
